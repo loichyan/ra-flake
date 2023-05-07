@@ -22,6 +22,7 @@ rec {
     { pname ? "rust-analyzer"
     , version
     , sha256 ? ""
+    , outputHashes ? { }
     , cargo ? pkgs.cargo
     , rustc ? pkgs.rustc
     , override ? (_: { })
@@ -42,7 +43,10 @@ rec {
           rev = version;
           inherit sha256;
         };
-        cargoLock.lockFile = "${src}/Cargo.lock";
+        cargoLock = {
+          inherit outputHashes;
+          lockFile = "${src}/Cargo.lock";
+        };
         buildInputs =
           optionals stdenv.isDarwin [
             darwin.apple_sdk.frameworks.CoreServices
