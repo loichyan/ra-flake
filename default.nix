@@ -24,7 +24,7 @@ rec {
     , sha256 ? ""
     , cargo ? pkgs.cargo
     , rustc ? pkgs.rustc
-    , extra ? { }
+    , override ? (_: { })
     }:
     let
       rustPlatform =
@@ -33,9 +33,7 @@ rec {
         if isAttrs version && version ? "rust"
         then (findVersionFor version.rust).rust_analyzer
         else version;
-    in
-    rustPlatform.buildRustPackage
-      rec {
+      drv = rec {
         inherit pname;
         version = ver;
         src = fetchFromGitHub {
@@ -60,5 +58,7 @@ rec {
           license = with lib.licenses; [ mit asl20 ];
           mainProgram = "rust-analyzer";
         };
-      } // extra;
+      };
+    in
+    rustPlatform.buildRustPackage (drv // override drv);
 }
