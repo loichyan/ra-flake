@@ -46,12 +46,14 @@ find_versions() {
 	done
 }
 
-output="${1}"
-if [[ -z "${output}" ]]; then
-	log "Output is not supplied"
-	exit 1
+if [[ "$#" -eq 0 ]]; then
+	exit
 fi
 
 read -ra rust_releases -d '\n' < <(get_releases rust-lang/rust)
 read -ra ra_releases -d '\n' < <(get_releases rust-lang/rust-analyzer)
-find_versions | jq -s '[.[] | {rust: .[0], rust_analyzer: .[1]}]' >"${output}"
+versions=$(find_versions | jq -s '[.[] | {rust: .[0], rust_analyzer: .[1]}]')
+
+for output in "$@"; do
+	echo "${versions}" >"${output}"
+done
