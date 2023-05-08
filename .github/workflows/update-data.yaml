@@ -1,0 +1,35 @@
+name: update-data
+
+on:
+  schedule:
+    # Runs at 00:00AM UTC
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-versions:
+    name: Update versions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install APT packages
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          version: 1.0
+          packages: curl jq
+
+      - name: Update packages
+        run: |
+          bash ./update-versions.sh
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: |
+            chore(data): update versions
+          commit_user_name: github-actions[bot]
+          commit_user_email: github-actions[bot]@users.noreply.github.com
