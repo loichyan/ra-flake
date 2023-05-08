@@ -10,8 +10,8 @@ permissions:
   contents: write
 
 jobs:
-  update-versions:
-    name: Update versions
+  update-data:
+    name: Update data
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,11 +23,12 @@ jobs:
           version: 1.0
           packages: curl jq
 
-      - name: Update packages
+      - name: Update versions
         run: |
           bash ./update-versions.sh
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: |
             chore(data): update versions
