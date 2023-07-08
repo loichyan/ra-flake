@@ -25,7 +25,7 @@ jobs:
 
       - name: Update versions
         run: |
-          bash ./update-versions.sh
+          bash ./update-versions.sh data/versions.json
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
