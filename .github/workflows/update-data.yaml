@@ -17,15 +17,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install APT packages
-        uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          version: 1.0
-          packages: curl jq
-
       - name: Update versions
         run: |
-          bash ./update-versions.sh data/versions.json
+          ./update-versions.sh -o data/versions.json
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
