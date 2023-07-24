@@ -7,20 +7,9 @@ log() {
 }
 
 get_releases() {
-	local repo="${1}" releases per_page
-	local -i page
-	for ((page = 1; ; page++)); do
-		log "Get releases of ${repo} at page ${page}"
-		per_page=$(
-			curl -fsSL "https://api.github.com/repos/${repo}/releases?per_page=100&page=${page}" |
-				jq -r '.[] | [.tag_name, .created_at] | join(",")'
-		)
-		if [[ -z "${per_page}" ]]; then
-			break
-		fi
-		releases+=$(printf "%s\n" "${per_page}")
-	done
-	echo "${releases}"
+	local repo="${1}"
+	log "Fetching releases of ${repo}"
+	gh api "repos/${repo}/releases" --paginate -q '.[] | [.tag_name, .created_at] | join(",")'
 }
 
 find_versions() {
@@ -46,14 +35,22 @@ find_versions() {
 	done
 }
 
-if [[ "$#" -eq 0 ]]; then
-	exit
+declare output
+while getopts "o:" arg; do
+	case "${arg}" in
+	o)
+		output=$OPTARG
+		;;
+	*)
+		exit 1
+		;;
+	esac
+done
+if [[ -z "${output}" ]]; then
+	log "Missing argument -o"
+	exit 1
 fi
 
 read -ra rust_releases -d '\n' < <(get_releases rust-lang/rust)
 read -ra ra_releases -d '\n' < <(get_releases rust-lang/rust-analyzer)
-versions=$(find_versions | jq -s '[.[] | {rust: .[0], rust_analyzer: .[1]}]')
-
-for output in "$@"; do
-	echo "${versions}" >"${output}"
-done
+find_versions | jq -s '[.[] | {rust: .[0], rust_analyzer: .[1]}]' >"${output}"
