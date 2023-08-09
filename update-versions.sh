@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 declare -a rust_releases ra_releases
 
 log() {
@@ -52,6 +52,6 @@ if [[ -z "${output}" ]]; then
 	exit 1
 fi
 
-read -ra rust_releases -d '\n' < <(get_releases rust-lang/rust)
-read -ra ra_releases -d '\n' < <(get_releases rust-lang/rust-analyzer)
+while read -ra rust_releases -d '\n'; do :; done < <(get_releases rust-lang/rust)
+while read -ra ra_releases -d '\n'; do :; done < <(get_releases rust-lang/rust-analyzer)
 find_versions | jq -s '[.[] | {rust: .[0], rust_analyzer: .[1]}]' >"${output}"
