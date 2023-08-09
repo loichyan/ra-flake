@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -e
 declare -a rust_releases ra_releases
 
 log() {
