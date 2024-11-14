@@ -1,4 +1,4 @@
-name: update-data
+name: CICD
 
 on:
   schedule:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   update-data:
-    name: Update data
+    name: Update Data
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
